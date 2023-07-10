@@ -21,10 +21,7 @@ const productSchema = new mongoose.Schema(
       require: true,
     },
   },
-  {
-    timestamps: true,
-    versionKey: false,
-  }
+  { versionKey: false }
 );
 productSchema.plugin(mongoosePaginate);
 export default mongoose.model("Product", productSchema);
