@@ -2,7 +2,7 @@ import Product from "../model/productModel";
 import Category from "../model/categoryModel";
 import productValidate from "../schema/productSchema";
 export const getAllProduct = async (req, res) => {
-  const { _limit = 10, _sort, _order } = req.query;
+  const { _limit = 50, _sort, _order } = req.query;
   const options = {
     limit: _limit,
   };
@@ -93,7 +93,8 @@ export const updateProduct = async (req, res) => {
         message: error.details[0].message,
       });
     }
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    const id = req.params.id;
+    const product = await Product.findOneAndUpdate({ _id: id }, req.body, {
       new: true,
     });
     if (!product) {

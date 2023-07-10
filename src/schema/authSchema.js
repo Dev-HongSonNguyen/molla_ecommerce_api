@@ -1,5 +1,6 @@
 import Joi from "joi";
 const signupValidate = Joi.object({
+  _id: Joi.string(),
   name: Joi.string().trim(),
   email: Joi.string().email().required().trim().messages({
     "string.email": "Email không đúng định dạng",
