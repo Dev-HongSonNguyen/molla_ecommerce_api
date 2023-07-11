@@ -10,11 +10,11 @@ export const getAllProduct = async (req, res) => {
     const product = await Product.paginate({}, options);
     if (!product) {
       return res.status(400).json({
-        message: "Tài nguyên không tồn tại !",
+        message: "Tài nguyên không tồn tại",
       });
     }
     return res.json({
-      message: "Lấy tài nguyên thành công !",
+      message: "Lấy tài nguyên thành công",
       product,
     });
   } catch (error) {
