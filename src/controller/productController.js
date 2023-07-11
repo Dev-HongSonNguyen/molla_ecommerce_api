@@ -2,7 +2,7 @@ import Product from "../model/productModel";
 import Category from "../model/categoryModel";
 import productValidate from "../schema/productSchema";
 export const getAllProduct = async (req, res) => {
-  const { _limit = 50, _sort, _order } = req.query;
+  const { _limit = 50 } = req.query;
   const options = {
     limit: _limit,
   };
@@ -76,6 +76,10 @@ export const deleteProduct = async (req, res) => {
         message: "Tài nguyên không tồn tại !",
       });
     }
+    const categoryId = product.categoryId;
+    await Category.findByIdAndUpdate(categoryId, {
+      $pull: { products: product._id },
+    });
     return res.json({
       message: "Xóa tài nguyên thành công !",
     });
@@ -96,6 +100,9 @@ export const updateProduct = async (req, res) => {
     const id = req.params.id;
     const product = await Product.findOneAndUpdate({ _id: id }, req.body, {
       new: true,
+    });
+    await Category.findByIdAndUpdate(product.categoryId, {
+      $addToSet: { products: product._id },
     });
     if (!product) {
       return res.status(400).json({
