@@ -2,7 +2,7 @@ import Product from "../model/productModel";
 import Category from "../model/categoryModel";
 import productValidate from "../schema/productSchema";
 export const getAllProduct = async (req, res) => {
-  const { _limit = 50, _sort, _order } = req.query;
+  const { _limit = 50 } = req.query;
   const options = {
     limit: _limit,
   };
