@@ -1,4 +1,5 @@
 import Category from "../model/categoryModel";
+import Product from "../model/productModel";
 export const getAllCategory = async (req, res) => {
   try {
     const category = await Category.find();
@@ -58,9 +59,10 @@ export const addCategory = async (req, res) => {
 export const deleteCategory = async (req, res) => {
   try {
     const category = await Category.findByIdAndRemove(req.params.id);
+    await Product.deleteMany({ categoryId: req.params.id });
     if (!category) {
       return res.status(400).json({
-        message: "Tài nguyên không tồn tại !",
+        message: "Tài nguyên không tồn tại",
       });
     }
     return res.json({
