@@ -6,10 +6,12 @@ import {
   getOneCategory,
   updateCategory,
 } from "../controller/categoryController";
+import { authenticate } from "../middleware/authenticate";
+import { authorization } from "../middleware/authorization";
 const router = express.Router();
 router.get("/categories", getAllCategory);
 router.get("/categories/:id", getOneCategory);
-router.post("/categories", addCategory);
-router.delete("/categories/:id", deleteCategory);
-router.put("/categories/:id", updateCategory);
+router.post("/categories", authenticate, authorization, addCategory);
+router.delete("/categories/:id", authenticate, authorization, deleteCategory);
+router.put("/categories/:id", authenticate, authorization, updateCategory);
 export default router;
