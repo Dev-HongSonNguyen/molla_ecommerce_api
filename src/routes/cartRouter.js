@@ -8,7 +8,7 @@ import {
 } from "../controller/cartController";
 import { authenticate } from "../middleware/authenticate";
 const router = express.Router();
-router.get("/cart", getAllCart);
+router.get("/cart", authenticate, getAllCart);
 router.get("/cart/:id", getOneCart);
 router.post("/cart", authenticate, createCart);
 router.put("/cart/:id", authenticate, updateCart);
