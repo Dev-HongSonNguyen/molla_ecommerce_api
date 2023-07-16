@@ -3,7 +3,8 @@ import Product from "../model/productModel";
 import Cart from "../model/cartModel";
 export const getAllCart = async (req, res) => {
   try {
-    const carts = await Cart.find();
+    const userId = req.user.id;
+    const carts = await Cart.find({ userId }).populate("productId");
     if (!carts) {
       return res.status(404).json({
         message: "Tài nguyên không tồn tại",
@@ -21,8 +22,9 @@ export const getAllCart = async (req, res) => {
 };
 export const getOneCart = async (req, res) => {
   try {
-    const cart = await Cart.findById(req.params.id);
-
+    const userId = req.user.userId;
+    const id = req.params.id;
+    const cart = await Cart.findById({ _id: id, userId }).populate("productId");
     if (!cart) {
       return res.json({
         message: "Tài nguyên không tồn tại",
@@ -41,7 +43,8 @@ export const getOneCart = async (req, res) => {
 export const createCart = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
-    const existingCart = await Cart.findOne({ productId });
+    const userId = req.user.id;
+    const existingCart = await Cart.findOne({ userId, productId });
 
     if (existingCart) {
       existingCart.quantity += quantity;
@@ -54,7 +57,7 @@ export const createCart = async (req, res) => {
         cart: existingCart,
       });
     } else {
-      const newCart = new Cart({ productId, quantity });
+      const newCart = new Cart({ productId, userId, quantity });
 
       const product = await Product.findById(productId);
       if (!product) {
@@ -87,9 +90,13 @@ export const updateCart = async (req, res) => {
       });
     }
     const id = req.params.id;
-    const cart = await Cart.findOneAndUpdate({ _id: id }, req.body, {
-      new: true,
-    });
+    const userId = req.user.userId;
+    const { productId, quantity } = req.body;
+    const cart = await Cart.findOneAndUpdate(
+      { _id: id, userId, productId },
+      { quantity },
+      { new: true }
+    );
     if (!cart) {
       return res.json({
         message: "Cập nhật tài nguyên không thành công !",
