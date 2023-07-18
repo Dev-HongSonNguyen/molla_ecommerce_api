@@ -82,3 +82,35 @@ export const signin = async (req, res) => {
     });
   }
 };
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await userSchema.find();
+    return res.status(200).json({
+      message: "Lấy danh sách người dùng thành công!",
+      data: users,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+export const getOneUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await userSchema.findById(userId).populate("cart");
+    if (!user) {
+      return res.status(404).json({
+        message: "Người dùng không tồn tại!",
+      });
+    }
+    return res.status(200).json({
+      message: "Lấy thông tin người dùng thành công!",
+      data: user,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: error.message,
+    });
+  }
+};

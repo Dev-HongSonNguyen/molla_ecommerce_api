@@ -1,5 +1,6 @@
 import cartValidate from "../schema/cartSchema";
 import Product from "../model/productModel";
+import User from "../model/authModel";
 import Cart from "../model/cartModel";
 export const getAllCart = async (req, res) => {
   try {
@@ -10,9 +11,17 @@ export const getAllCart = async (req, res) => {
         message: "Tài nguyên không tồn tại",
       });
     }
+    let totalAmount = 0;
+    let totalQuantity = 0;
+    carts.forEach((cart) => {
+      totalAmount += cart.totalPrice;
+      totalQuantity += cart.quantity;
+    });
     return res.json({
       message: "Lấy tài nguyên thành công !",
       carts,
+      totalAmount,
+      totalQuantity,
     });
   } catch (error) {
     return res.status(400).json({
@@ -20,44 +29,38 @@ export const getAllCart = async (req, res) => {
     });
   }
 };
+
 export const getOneCart = async (req, res) => {
   try {
-    const userId = req.user.userId;
-    const id = req.params.id;
-    const cart = await Cart.findById({ _id: id, userId }).populate("productId");
+    const { cartId } = req.params;
+    const cart = await Cart.findById(cartId)
+      .populate("userId")
+      .populate("productId");
+
     if (!cart) {
-      return res.json({
-        message: "Tài nguyên không tồn tại",
+      return res.status(404).json({
+        message: "Không tìm thấy giỏ hàng",
       });
     }
     return res.json({
-      message: "Lấy tài nguyên thành công !",
+      message: "Lấy thông tin giỏ hàng thành công",
       cart,
     });
   } catch (error) {
     return res.status(400).json({
-      message: error,
+      message: error.message,
     });
   }
 };
-export const createCart = async (req, res) => {
+export const addToCart = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
     const userId = req.user.id;
+
     const existingCart = await Cart.findOne({ userId, productId });
 
     if (existingCart) {
       existingCart.quantity += quantity;
-      existingCart.totalPrice = existingCart.quantity * existingCart.price;
-
-      await existingCart.save();
-
-      return res.json({
-        message: "Thêm vào giỏ hàng thành công!",
-        cart: existingCart,
-      });
-    } else {
-      const newCart = new Cart({ productId, userId, quantity });
 
       const product = await Product.findById(productId);
       if (!product) {
@@ -66,13 +69,69 @@ export const createCart = async (req, res) => {
         });
       }
 
-      newCart.price = product.price;
-      newCart.totalPrice = newCart.quantity * newCart.price;
-      await newCart.save();
+      if (isNaN(existingCart.quantity) || isNaN(product.price)) {
+        return res.status(400).json({
+          message: "Số lượng hoặc giá sản phẩm không hợp lệ",
+        });
+      }
 
+      existingCart.totalPrice = existingCart.quantity * product.price;
+
+      await existingCart.save();
+      // Tính toán totalAmount cho người dùng
+      const carts = await Cart.find({ userId });
+      let totalAmount = 0;
+      carts.forEach((cart) => {
+        totalAmount += cart.totalPrice;
+      });
+
+      // Cập nhật totalAmount cho người dùng
+      await User.findByIdAndUpdate(userId, { totalAmount });
+
+      await User.findByIdAndUpdate(existingCart.userId, {
+        $addToSet: { cart: existingCart._id },
+      });
+
+      return res.json({
+        message: "Cập nhật giỏ hàng thành công!",
+        cart: existingCart,
+        totalAmount,
+      });
+    } else {
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({
+          message: "Không tìm thấy sản phẩm",
+        });
+      }
+
+      if (isNaN(quantity) || isNaN(product.price)) {
+        return res.status(400).json({
+          message: "Số lượng hoặc giá sản phẩm không hợp lệ",
+        });
+      }
+
+      const newCart = new Cart({
+        userId,
+        productId,
+        quantity,
+        totalPrice: quantity * product.price,
+      });
+
+      await newCart.save();
+      // Tính toán totalAmount cho người dùng
+      const carts = await Cart.find({ userId });
+      let totalAmount = 0;
+      carts.forEach((cart) => {
+        totalAmount += cart.totalPrice;
+      });
+
+      // Cập nhật totalAmount cho người dùng
+      await User.findByIdAndUpdate(userId, { totalAmount });
       return res.json({
         message: "Thêm vào giỏ hàng thành công!",
         cart: newCart,
+        totalAmount,
       });
     }
   } catch (error) {

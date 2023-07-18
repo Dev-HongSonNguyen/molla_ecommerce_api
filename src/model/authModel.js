@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "member",
     },
+    cart: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Cart",
+      },
+    ],
   },
   { timestamps: true, versionKey: false }
 );
