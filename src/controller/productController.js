@@ -1,5 +1,6 @@
 import Product from "../model/productModel";
 import Category from "../model/categoryModel";
+import Cart from "../model/cartModel";
 import productValidate from "../schema/productSchema";
 export const getAllProduct = async (req, res) => {
   const { _limit = 50 } = req.query;
@@ -76,6 +77,7 @@ export const deleteProduct = async (req, res) => {
         message: "Tài nguyên không tồn tại !",
       });
     }
+    await Cart.deleteMany({ productId: req.params.id });
     const categoryId = product.categoryId;
     await Category.findByIdAndUpdate(categoryId, {
       $pull: { products: product._id },
