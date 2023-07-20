@@ -9,7 +9,7 @@ import {
 import { authenticate } from "../middleware/authenticate";
 const router = express.Router();
 router.get("/cart", authenticate, getAllCart);
-router.get("/cart/:id", getOneCart);
+router.get("/cart/:id", authenticate, getOneCart);
 router.post("/cart", authenticate, addToCart);
 router.put("/cart/:id", authenticate, updateCart);
 router.delete("/cart/:id", authenticate, deleteCart);

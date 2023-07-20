@@ -6,6 +6,7 @@ import authRouter from "./routes/authRouter";
 import uploadRouter from "./routes/uploadRouter";
 import searchRouter from "./routes/searchRouter";
 import cartRouter from "./routes/cartRouter";
+import orderRouter from "./routes/orderRouter";
 import connectDB from "./config/database";
 import dotenv from "dotenv";
 const app = express();
@@ -19,6 +20,7 @@ app.use(authRouter);
 app.use(uploadRouter);
 app.use(searchRouter);
 app.use(cartRouter);
+app.use(orderRouter);
 connectDB(process.env.URL_MONGO);
 
 export const viteNodeApp = app;
