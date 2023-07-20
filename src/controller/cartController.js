@@ -5,7 +5,9 @@ import Cart from "../model/cartModel";
 export const getAllCart = async (req, res) => {
   try {
     const userId = req.user.id;
-    const carts = await Cart.find({ userId }).populate("productId");
+    const carts = await Cart.find({ userId })
+      .populate("productId")
+      .populate("userId");
     if (!carts) {
       return res.status(404).json({
         message: "Tài nguyên không tồn tại",
@@ -32,11 +34,13 @@ export const getAllCart = async (req, res) => {
 
 export const getOneCart = async (req, res) => {
   try {
-    const { cartId } = req.params;
-    const cart = await Cart.findById(cartId)
+    const { id } = req.params;
+    const cart = await Cart.findById(id)
       .populate("userId")
       .populate("productId");
-
+    // .populate("productId");
+    console.log(cart);
+    return;
     if (!cart) {
       return res.status(404).json({
         message: "Không tìm thấy giỏ hàng",
