@@ -3,9 +3,9 @@ import Cart from "../model/cartModel";
 import User from "../model/authModel";
 
 const createCheckout = async (req, res) => {
-  const { shippingAddress, phoneNumber } = req.body;
+  const { shippingAddress, phoneNumber, userId } = req.body;
   try {
-    const userId = req.user.id;
+    // const userId = req.user.id;
     const carts = await Cart.find({ userId }).populate("productId");
     if (!carts) {
       return res.status(404).json({
@@ -13,22 +13,15 @@ const createCheckout = async (req, res) => {
       });
     }
     let totalAmount = 0;
-    let totalQuantity = 0;
     for (const item of carts) {
       totalAmount += item.totalPrice;
-      totalQuantity += item.quantity;
     }
     const newCheckout = await Checkout.create({
       userId,
-      products: carts.map((item) => ({
-        productId: item.productId._id,
-        quantity: item.quantity,
-        totalPrice: item.totalPrice,
-      })),
       totalAmount,
-      totalQuantity,
       shippingAddress,
       phoneNumber,
+      carts,
     });
     await Cart.deleteMany({ userId });
     await User.findByIdAndUpdate(userId, { $set: { cart: [] } });

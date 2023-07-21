@@ -7,7 +7,7 @@ const checkoutSchema = new mongoose.Schema(
       ref: "Users",
       required: true,
     },
-    products: [
+    carts: [
       {
         productId: {
           type: mongoose.Schema.Types.ObjectId,
@@ -28,10 +28,10 @@ const checkoutSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    totalQuantity: {
-      type: Number,
-      required: true,
-    },
+    // totalQuantity: {
+    //   type: Number,
+    //   required: true,
+    // },
     paymentStatus: {
       type: String,
       enum: ["pending", "paid", "failed"],
