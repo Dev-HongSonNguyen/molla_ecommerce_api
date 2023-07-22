@@ -41,11 +41,6 @@ export const getOneCategory = async (req, res) => {
 export const addCategory = async (req, res) => {
   try {
     const category = await Category.create(req.body);
-    if (!category) {
-      return res.status(400).json({
-        message: "Tài nguyên không tồn tại !",
-      });
-    }
     return res.json({
       message: "Thêm tài nguyên thành công !",
       category,

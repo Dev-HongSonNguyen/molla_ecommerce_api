@@ -5,7 +5,6 @@ import User from "../model/authModel";
 const createCheckout = async (req, res) => {
   const { shippingAddress, phoneNumber, userId } = req.body;
   try {
-    // const userId = req.user.id;
     const carts = await Cart.find({ userId }).populate("productId");
     if (!carts) {
       return res.status(404).json({
