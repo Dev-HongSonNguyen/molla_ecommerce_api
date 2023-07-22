@@ -54,11 +54,6 @@ export const addProduct = async (req, res) => {
     await Category.findByIdAndUpdate(product.categoryId, {
       $addToSet: { products: product._id },
     });
-    if (!product) {
-      return res.status(400).json({
-        message: "Tài nguyên không tồn tại !",
-      });
-    }
     return res.json({
       message: "Thêm tài nguyên thành công !",
       product,
