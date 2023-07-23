@@ -36,4 +36,81 @@ const createCheckout = async (req, res) => {
       .json({ success: false, error: "Thanh toán đơn hàng không thành công" });
   }
 };
-export { createCheckout };
+const getAllOrdersByUser = async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const orders = await Checkout.find({ userId }).populate("carts.productId");
+    return res.status(200).json({
+      success: true,
+      orders,
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Lấy danh sách đơn hàng thất bại" });
+  }
+};
+const getOneOrder = async (req, res) => {
+  try {
+    const orders = await Checkout.findById(req.params.id).populate(
+      "carts.productId"
+    );
+    if (!orders) {
+      return res.status(400).json({
+        message: "Tài nguyên không tồn tại !",
+      });
+    }
+    return res.json({
+      message: "Lấy tài nguyên thành công !",
+      orders,
+    });
+  } catch (error) {
+    return res.status(404).json({
+      message: error.message,
+    });
+  }
+};
+const deleteOrder = async (req, res) => {
+  try {
+    const deletedOrder = await Checkout.findByIdAndDelete(req.params.id);
+    if (!deletedOrder) {
+      return res.status(404).json({
+        success: false,
+        message: "Đơn hàng không tồn tại",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Xóa đơn hàng thành công",
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Xóa đơn hàng thất bại" });
+  }
+};
+export const updateOrder = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const orders = await Checkout.findOneAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
+    if (!orders) {
+      return res.status(400).json({
+        message: "Tài nguyên không tồn tại !",
+      });
+    }
+    return res.json({
+      message: "Update tài nguyên thành công !",
+      orders,
+    });
+  } catch (error) {
+    return res.status(404).json({
+      message: error.message,
+    });
+  }
+};
+
+export { createCheckout, getAllOrdersByUser, getOneOrder, deleteOrder };
