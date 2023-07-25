@@ -67,7 +67,7 @@ export const signin = async (req, res) => {
       });
     }
     const accessToken = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "10m",
+      expiresIn: "1d",
     });
     return res.status(200).json({
       message: "Đăng nhập thành công !",
