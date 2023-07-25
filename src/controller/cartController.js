@@ -101,13 +101,11 @@ export const addToCart = async (req, res) => {
           message: "Không tìm thấy sản phẩm",
         });
       }
-
       if (isNaN(quantity) || isNaN(product.price)) {
         return res.status(400).json({
           message: "Số lượng hoặc giá sản phẩm không hợp lệ",
         });
       }
-
       const newCart = new Cart({
         userId,
         productId,
