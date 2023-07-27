@@ -2,6 +2,7 @@ import express from "express";
 import {
   createCheckout,
   deleteOrder,
+  getAllOrder,
   getAllOrdersByUser,
   getOneOrder,
   updateOrder,
@@ -12,6 +13,7 @@ import { authorization } from "../middleware/authorization";
 const router = express.Router();
 router.post("/checkout", authenticate, createCheckout);
 router.get("/checkout", authenticate, getAllOrdersByUser);
+router.get("/checkoutNoUser", getAllOrder);
 router.get("/checkout/:id", authenticate, getOneOrder);
 router.delete("/checkout/:id", authenticate, deleteOrder);
 router.put("/checkout/:id", authenticate, authorization, updateOrder);
