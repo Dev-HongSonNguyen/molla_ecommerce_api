@@ -45,10 +45,27 @@ const getAllOrdersByUser = async (req, res) => {
       orders,
     });
   } catch (error) {
-    console.error(error);
     return res
       .status(500)
       .json({ success: false, error: "Lấy danh sách đơn hàng thất bại" });
+  }
+};
+const getAllOrder = async (req, res) => {
+  try {
+    const orders = await Checkout.find();
+    if (!orders) {
+      return res.status(400).json({
+        message: "Tài nguyên không tồn tại !",
+      });
+    }
+    return res.json({
+      message: "Lấy tài nguyên thành công !",
+      orders,
+    });
+  } catch (error) {
+    return res.status(404).json({
+      message: error.message,
+    });
   }
 };
 const getOneOrder = async (req, res) => {
@@ -113,4 +130,10 @@ export const updateOrder = async (req, res) => {
   }
 };
 
-export { createCheckout, getAllOrdersByUser, getOneOrder, deleteOrder };
+export {
+  createCheckout,
+  getAllOrdersByUser,
+  getOneOrder,
+  deleteOrder,
+  getAllOrder,
+};
