@@ -137,32 +137,31 @@ export const addToCart = async (req, res) => {
 };
 export const updateCart = async (req, res) => {
   try {
-    const { error } = cartValidate.validate(req.body);
-    if (error) {
-      return res.status(400).json({
-        massage: error.details[0].message,
-      });
-    }
     const id = req.params.id;
-    const userId = req.user.userId;
-    const { productId, quantity } = req.body;
-    const cart = await Cart.findOneAndUpdate(
-      { _id: id, userId, productId },
-      { quantity },
-      { new: true }
-    );
+    const { quantity } = req.body;
+
+    const cart = await Cart.findOne({ _id: id });
     if (!cart) {
-      return res.json({
-        message: "Cập nhật tài nguyên không thành công !",
+      return res.status(404).json({
+        message: "Sản phẩm không tồn tại !",
       });
     }
+    const product = await Product.findById(cart.productId);
+    if (!product) {
+      return res.status(404).json({
+        message: "Sản phẩm không tồn tại !",
+      });
+    }
+    cart.quantity = quantity;
+    cart.totalPrice = Number(product.price) * Number(quantity);
+    cart.save();
     return res.json({
       message: "Cập nhật tài nguyên thành công !",
       cart,
     });
   } catch (error) {
-    return res.json(400).json({
-      message: error,
+    return res.status(400).json({
+      message: error.message,
     });
   }
 };
