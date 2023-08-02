@@ -1,6 +1,7 @@
 import { signinValidate, signupValidate } from "../schema/authSchema";
 import bcrypt from "bcryptjs";
-import userSchema from "../model/authModel";
+import User from "../model/authModel";
+import Order from "../model/orderModer";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
@@ -18,7 +19,7 @@ export const signup = async (req, res) => {
       });
     }
     // check email đã tồn tại
-    const checkEmail = await userSchema.findOne({ email });
+    const checkEmail = await User.findOne({ email });
     if (checkEmail) {
       return res.status(400).json({
         message: "Email này đã được đăng ký !",
@@ -27,7 +28,7 @@ export const signup = async (req, res) => {
     // ma hoa mat khau khi dky
     const encodePassword = await bcrypt.hash(password, 10);
     //tao accessToken
-    const user = await userSchema.create({
+    const user = await User.create({
       name,
       email,
       password: encodePassword,
@@ -54,7 +55,7 @@ export const signin = async (req, res) => {
         message: error.details[0].message,
       });
     }
-    const user = await userSchema.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({
         message: "Email hoặc mật khẩu không chính xác !",
@@ -84,7 +85,7 @@ export const signin = async (req, res) => {
 };
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await userSchema.find();
+    const users = await User.find();
     return res.status(200).json({
       message: "Lấy danh sách người dùng thành công!",
       data: users,
@@ -98,7 +99,7 @@ export const getAllUsers = async (req, res) => {
 export const getOneUser = async (req, res) => {
   try {
     const userId = req.params.id;
-    const user = await userSchema.findById(userId).populate("cart");
+    const user = await User.findById(userId).populate("cart");
     if (!user) {
       return res.status(404).json({
         message: "Người dùng không tồn tại!",
@@ -110,6 +111,46 @@ export const getOneUser = async (req, res) => {
     });
   } catch (error) {
     return res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+export const updateUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findOneAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
+    if (!user) {
+      return res.status(400).json({
+        message: "Tài nguyên không tồn tại !",
+      });
+    }
+    return res.json({
+      message: "Update tài nguyên thành công !",
+      user,
+    });
+  } catch (error) {
+    return res.status(404).json({
+      message: error.message,
+    });
+  }
+};
+export const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndRemove(req.params.id);
+    if (!user) {
+      return res.status(400).json({
+        message: "Tài nguyên không tồn tại",
+      });
+    }
+    await Order.deleteMany({ userId: req.params.id });
+    return res.json({
+      message: "Xóa tài nguyên thành công !",
+      user,
+    });
+  } catch (error) {
+    return res.status(404).json({
       message: error.message,
     });
   }
