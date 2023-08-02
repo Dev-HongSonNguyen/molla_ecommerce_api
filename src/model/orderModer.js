@@ -30,8 +30,15 @@ const checkoutSchema = new mongoose.Schema(
     },
     paymentStatus: {
       type: String,
-      enum: ["pending", "paid", "failed"],
-      default: "pending",
+      enum: [
+        "Pending confirmation",
+        "Processing",
+        "Out for delivery",
+        "Delivered successfully",
+        "Delivery failed",
+        "Cancelled",
+      ],
+      default: "Pending confirmation",
     },
     shippingAddress: {
       type: String,
