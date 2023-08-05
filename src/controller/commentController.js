@@ -26,7 +26,24 @@ export const createComment = async (req, res) => {
     });
   }
 };
-export const getAllComment = async (req, res) => {};
+export const getAllComment = async (req, res) => {
+  try {
+    const comment = await Comment.find();
+    if (!comment) {
+      return res.status(400).json({
+        message: "Tài nguyên không tồn tại !",
+      });
+    }
+    return res.json({
+      message: "Lấy tài nguyên thành công !",
+      comment,
+    });
+  } catch (error) {
+    return res.status(404).json({
+      message: error.message,
+    });
+  }
+};
 export const getCommentByProductId = async (req, res) => {
   const productId = req.params.productId;
   try {
@@ -39,5 +56,25 @@ export const getCommentByProductId = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Đã xảy ra lỗi khi lấy dữ liệu bình luận." });
+  }
+};
+export const deleteComment = async (req, res) => {
+  try {
+    const delComment = await Comment.findByIdAndDelete(req.params.id);
+    if (!delComment) {
+      return res.status(404).json({
+        success: false,
+        message: "Comment không tồn tại",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Xóa comment thành công",
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Xóa comment thất bại" });
   }
 };
