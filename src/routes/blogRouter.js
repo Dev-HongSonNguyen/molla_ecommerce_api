@@ -1,0 +1,11 @@
+import express from "express";
+import { authenticate } from "../middleware/authenticate";
+import { authorization } from "../middleware/authorization";
+import { addBlog, deleteBlog, getAllBlog, getOneBlog, updateBlog } from "../controller/blogController";
+const router = express.Router();
+router.get("/blog", getAllBlog);
+router.get("/blog/:id", getOneBlog);
+router.post("/blog", authenticate, authorization, addBlog);
+router.delete("/blog/:id", authenticate, authorization, deleteBlog);
+router.put("/blog/:id", authenticate, authorization, updateBlog);
+export default router;
