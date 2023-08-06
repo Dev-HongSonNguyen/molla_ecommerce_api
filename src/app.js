@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+import connectDB from "./config/database";
 import productRouter from "./routes/productRouter";
 import categoryRouter from "./routes/categoryRouter";
 import authRouter from "./routes/authRouter";
@@ -8,21 +10,27 @@ import searchRouter from "./routes/searchRouter";
 import cartRouter from "./routes/cartRouter";
 import orderRouter from "./routes/orderRouter";
 import commentRouter from "./routes/commentRouter";
-import connectDB from "./config/database";
-import dotenv from "dotenv";
+import blogRouter from "./routes/blogRouter";
+
 const app = express();
 dotenv.config();
 
 app.use(express.json());
 app.use(cors());
-app.use(productRouter);
-app.use(categoryRouter);
-app.use(authRouter);
-app.use(uploadRouter);
-app.use(searchRouter);
-app.use(cartRouter);
-app.use(orderRouter);
-app.use(commentRouter);
+
+const routers = [
+    productRouter,
+    categoryRouter,
+    authRouter,
+    uploadRouter,
+    searchRouter,
+    cartRouter,
+    orderRouter,
+    commentRouter,
+    blogRouter,
+];
+routers.forEach((router) => app.use(router));
+
 connectDB(process.env.URL_MONGO);
 
 export const viteNodeApp = app;

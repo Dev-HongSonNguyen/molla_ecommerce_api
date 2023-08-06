@@ -73,7 +73,7 @@ export const deleteCategory = async (req, res) => {
 export const updateCategory = async (req, res) => {
   try {
     const id = req.params.id;
-    const category = await Category.findOneAndUpdate({ _id: id }, req.body);
+    const category = await Category.findOneAndUpdate({ _id: id }, req.body, { new: true });
     if (!category) {
       return res.status(400).json({
         message: "Tài nguyên không tồn tại !",
