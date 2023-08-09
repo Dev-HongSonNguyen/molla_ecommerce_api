@@ -26,7 +26,7 @@ export const getAllProduct = async (req, res) => {
 };
 export const getOneProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).populate("categoryId");
     if (!product) {
       return res.status(400).json({
         message: "Tài nguyên không tồn tại !",
