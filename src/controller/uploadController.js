@@ -16,7 +16,6 @@ export const uploadImage = async (req, res) => {
         throw new Error("Invalid file type");
       }
     });
-    console.log("uploadPromises", uploadPromises);
     const results = await Promise.all(uploadPromises);
     const uploadedFiles = results.map((result) => ({
       url: result.secure_url,
