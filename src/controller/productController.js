@@ -24,9 +24,28 @@ export const getAllProduct = async (req, res) => {
     });
   }
 };
+export const getAllProductByCategory = async (req, res) => {
+  const categoryId = req.query.categoryId
+  try {
+    const product = await Product.find({ categoryId });
+    if (!product) {
+      return res.status(400).json({
+        message: "Tài nguyên không tồn tại",
+      });
+    }
+    return res.json({
+      message: "Lấy tài nguyên thành công",
+      product,
+    });
+  } catch (error) {
+    return res.status(404).json({
+      message: error.message,
+    });
+  }
+}
 export const getOneProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).populate("categoryId");
+    const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(400).json({
         message: "Tài nguyên không tồn tại !",
