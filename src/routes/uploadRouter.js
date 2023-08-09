@@ -11,7 +11,7 @@ const router = express.Router();
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "Movifx",
+    folder: "BookShopMolla",
     resource_type: "auto",
   },
 });
