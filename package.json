@@ -10,10 +10,6 @@
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/datlt2306/web503/issues"
-    },
-    "homepage": "https://github.com/datlt2306/web503#readme",
     "dependencies": {
         "bcryptjs": "^2.4.3",
         "cloudinary": "^1.37.3",
