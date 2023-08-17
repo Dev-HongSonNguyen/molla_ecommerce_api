@@ -5,7 +5,8 @@ import {
   getOneUser,
   signin,
   signup,
-  updateUser,
+  updateUserbyAdmin,
+  updateUserbyUser,
 } from "../controller/authController";
 import { authenticate } from "../middleware/authenticate";
 import { authorization } from "../middleware/authorization";
@@ -14,6 +15,7 @@ router.post("/signup", signup);
 router.post("/signin", signin);
 router.get("/users", getAllUsers);
 router.get("/users/:id", getOneUser);
-router.put("/users/:id", authenticate, authorization, updateUser);
+router.put("/userbyAdmin/:id", authenticate, authorization, updateUserbyAdmin);
+router.put("/userbyUser/:id", authenticate, updateUserbyUser);
 router.delete("/users/:id", authenticate, authorization, deleteUser);
 export default router;

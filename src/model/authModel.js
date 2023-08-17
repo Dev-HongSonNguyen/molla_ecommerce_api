@@ -14,6 +14,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "member",
     },
+    avatar: {
+      type: String,
+      default:
+        "https://res.cloudinary.com/dwzh9i6xf/image/upload/v1692269660/BookShopMolla/770136_man_512x512_yfbmuw.png",
+    },
     cart: [
       {
         type: mongoose.Types.ObjectId,

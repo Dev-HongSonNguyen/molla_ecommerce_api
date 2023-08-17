@@ -115,7 +115,28 @@ export const getOneUser = async (req, res) => {
     });
   }
 };
-export const updateUser = async (req, res) => {
+export const updateUserbyAdmin = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findOneAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
+    if (!user) {
+      return res.status(400).json({
+        message: "Tài nguyên không tồn tại !",
+      });
+    }
+    return res.json({
+      message: "Update tài nguyên thành công !",
+      user,
+    });
+  } catch (error) {
+    return res.status(404).json({
+      message: error.message,
+    });
+  }
+};
+export const updateUserbyUser = async (req, res) => {
   try {
     const id = req.params.id;
     const user = await User.findOneAndUpdate({ _id: id }, req.body, {
